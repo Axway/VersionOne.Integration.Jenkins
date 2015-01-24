@@ -12,7 +12,7 @@
 
 	<groupId>com.versionone</groupId>
 	<artifactId>versionone-jenkins-notifier</artifactId>
-	<version>10.0.1-SNAPSHOT</version>
+	<version>10.0.1-AXWAY-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
 	<name>VersionOne Notifier for Jenkins</name>
@@ -153,6 +153,13 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.jenkins-ci.tools</groupId>
+				<artifactId>maven-hpi-plugin</artifactId>
+				<configuration>
+					<disabledTestInjection>true</disabledTestInjection>
+				</configuration>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -245,7 +252,7 @@
 		<dependency>
 			<groupId>com.versionone</groupId>
 			<artifactId>VersionOne.SDK.Java.ObjectModel</artifactId>
-			<version>12.1.0.150</version>
+			<version>13.0.2-AXWAY-1</version>
 		</dependency>
 
 	    <dependency>
