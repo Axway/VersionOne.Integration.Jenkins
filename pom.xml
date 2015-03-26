@@ -281,7 +281,6 @@
 		<dependency>
 			<groupId>com.versionone</groupId>
 			<artifactId>VersionOne.SDK.Java.ObjectModel</artifactId>
-			<version>13.0.2-AXWAY-1</version>
 			<version>12.1.0.150</version>
             <exclusions>
                 <!-- See Comment #1 -->
