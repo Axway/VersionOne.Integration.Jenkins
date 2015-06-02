@@ -156,6 +156,8 @@ public class V1Worker implements Worker {
 
             filter.reference.add(id);
             Collection<ChangeSet> changeSetList = config.getV1Instance().get().changeSets(filter);
+            Set<PrimaryWorkitem> workitems = determineWorkitems(change.getComment());
+            changeSetList = getChangeSetIfAlreadyExistInWorkitem(changeSetList, workitems);
             if (changeSetList.isEmpty()) {
                 // We don't have one yet. Create one.
                 StringBuilder name = new StringBuilder();
@@ -166,7 +168,7 @@ public class V1Worker implements Worker {
                     name.append(new DB.DateTime(change.getDate()));
                 }
                 name.append('\'');
-                
+
                 Map<String, Object> attributes = new HashMap<String, Object>();
 
                 attributes.put("Description", getComment(change));
@@ -176,7 +178,6 @@ public class V1Worker implements Worker {
                 changeSetList.add(changeSet);
             }
 
-            Set<PrimaryWorkitem> workitems = determineWorkitems(change.getComment());
             associateWithBuildRun(buildRun, changeSetList, workitems);
         }
     }
@@ -207,6 +208,30 @@ public class V1Worker implements Worker {
         }
 
         return comment.toString();
+    }
+
+    /**
+     * Evaluates if Changeset already exists in same Workitem.
+     *
+     * @param changeSetList - list of changeset already exists in V1.
+     * @param workitems - list of workitems present in comment message.
+     * @return Changeset if present in workitem.
+     */
+    private Collection<ChangeSet> getChangeSetIfAlreadyExistInWorkitem(Collection<ChangeSet> changeSetList,Set<PrimaryWorkitem> workitems) {
+        Collection<ChangeSet> linkedChangeSet = new ArrayList<ChangeSet>(1);
+        for (PrimaryWorkitem workitem : workitems) {
+            String workitemID = workitem.getDisplayID().toString();
+            for (ChangeSet changeSet : changeSetList) {
+                Collection<PrimaryWorkitem> primaryWorkitems = changeSet.getPrimaryWorkitems();
+                for (PrimaryWorkitem primaryWorkitem : primaryWorkitems) {
+                    if (primaryWorkitem.getDisplayID().toString().equals(workitemID)) {
+                        linkedChangeSet.add(changeSet);
+                        return linkedChangeSet;
+                    }
+                }
+            }
+        }
+        return linkedChangeSet;
     }
 
     private void associateWithBuildRun(BuildRun buildRun, Collection<ChangeSet> changeSets,
